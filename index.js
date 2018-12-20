@@ -47,7 +47,7 @@ let validation = function(serverRoles, userRoles){
     let val = false;
     serverRoles.forEach((raole) => {
         userRoles.forEach((usr) => {
-            if (role == usr) {
+            if (role == user) {
                 val = true;
             }
         });
