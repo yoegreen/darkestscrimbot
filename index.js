@@ -8,7 +8,6 @@ const port = process.env.PORT || 3000;
 // This is a simple server
 http.createServer().listen(port);
 
-
 // initialise are bot
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
@@ -38,16 +37,14 @@ fs.readdir('./cmds', (err,files) => {
     })
 })
 
-
-
 let raw = fs.readFileSync('./roles.json');
 let allowedRoles = JSON.parse(raw);
 
 let validation = function(serverRoles, userRoles){
     let val = false;
-    serverRoles.forEach((raole) => {
+    serverRoles.forEach((role) => {
         userRoles.forEach((usr) => {
-            if (role == user) {
+            if (role == usr){
                 val = true;
             }
         });
@@ -55,12 +52,16 @@ let validation = function(serverRoles, userRoles){
     return val;
 }
 
+
+
+
 bot.on('ready', async () => {
     console.log("Hello, im ready");
 
 });
 
-bot.on("message",msg => {
+
+bot.on('message',msg => {
     if (msg.channel.type === "dm") return;
     if (msg.author.bot) return;
 
@@ -70,27 +71,23 @@ bot.on("message",msg => {
 
     if (!command.startsWith(prefix)) return;
 
-    if (validation(allowedRoles.roles, msg.member.roles.array()) || msg.member.id === owner){
-        let cmd = bot.commands.get(command.slice(prefix.length));
-    if (cmd){
-        cmd.run(bot,msg,args);
-    
-
-
-    }
-    
-    }else {
-        msg.channel.send("You don't have access to this bot's commands");
-    
+    if (bot.commands.get(command.slice(prefix.length))){
+        if (validation(allowedRoles.roles,msg.member.roles.array()) || msg.member.id === owner){
+                let cmd = bot.commands.get(command.slice(prefix.length));
+                if (cmd){
+                    cmd.run(bot,msg,args);
+                }
+        } else {
+                msg.channel.send("You dont have acces to this bot commands");
+        }
     }
     
 });
 
 bot.on('error', err => {
     console.log(err);
-})
+});
 
 
-
+// Bot login
 bot.login(token);
- 
